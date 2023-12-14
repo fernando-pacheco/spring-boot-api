@@ -18,16 +18,6 @@ public class GreetingsController {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
-
-    @RequestMapping(value="/olamundo/{nome}", method = RequestMethod.GET)
-    @ResponseStatus(HttpStatus.OK)
-    public String retornaOlamundo(@RequestParam("name") String name) {
-        Usuario usuario = new Usuario();
-        usuario.setNome(name);
-        usuarioRepository.save(usuario);
-        return "Olá mundo " + name;
-    }
-
     @GetMapping(value="listatodos")
     @ResponseBody
     public ResponseEntity<List<Usuario>> listaUsuario() {
@@ -45,14 +35,40 @@ public class GreetingsController {
         return new ResponseEntity<Usuario>(user, HttpStatus.CREATED);
 
     }
-    @DeleteMapping(value = "delete")
+    @PutMapping(value = "atualizar")
     @ResponseBody
-    public ResponseEntity<String> delete(@RequestParam("id") Long iduser) {
+    public ResponseEntity<?> atualizar(@RequestBody Usuario usuario) {
 
-        usuarioRepository.deleteById(iduser);
-        return new ResponseEntity<String>("User deletado com sucesso", HttpStatus.OK);
+        if (usuario.getId() == null) {
+            return new ResponseEntity<String>("ID não foi informado", HttpStatus.OK);
+        }
+
+        Usuario user = usuarioRepository.saveAndFlush(usuario);
+        return new ResponseEntity<Usuario>(user, HttpStatus.OK);
 
     }
+
+    @GetMapping(value = "buscaruserid")
+    @ResponseBody
+    public ResponseEntity<Usuario> buscaruserid(@RequestParam(name = "iduser") Long iduser) {
+
+        Usuario usuario = usuarioRepository.findById(iduser).get();
+        return new ResponseEntity<Usuario>(usuario, HttpStatus.OK);
+
+    }
+
+    @GetMapping(value = "filtrarPorNome")
+    @ResponseBody
+    public ResponseEntity<List<Usuario>> filtrarPorNome(@RequestParam(name = "nome") String nome) {
+
+        List<Usuario> usuario = usuarioRepository.filtrarPorNome(nome.trim());
+        return new ResponseEntity<List<Usuario>>(usuario, HttpStatus.OK);
+
+    }
+
+
+
+
 
 
 }
