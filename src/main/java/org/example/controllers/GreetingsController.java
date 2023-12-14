@@ -4,11 +4,9 @@ import org.example.model.Usuario;
 import org.example.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import java.util.List;
 
 /**
  *
@@ -20,23 +18,41 @@ public class GreetingsController {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
-    /**
-     *
-     * @param name the name to greet
-     * @return greeting text
-     */
-    @RequestMapping(value = "/mostrar_nome/{name}", method = RequestMethod.GET)
-    @ResponseStatus(HttpStatus.OK)
-    public String greetingText(@PathVariable String name) {
-        return "Springboot API: " + name + "!";
-    }
+
     @RequestMapping(value="/olamundo/{nome}", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
-    public String retornaOlaMundo(@PathVariable String nome){
+    public String retornaOlamundo(@RequestParam("name") String name) {
         Usuario usuario = new Usuario();
-        usuario.setNome(nome);
+        usuario.setNome(name);
         usuarioRepository.save(usuario);
-        return "Ola mundo "+ nome;
+        return "Olá mundo " + name;
     }
+
+    @GetMapping(value="listatodos")
+    @ResponseBody
+    public ResponseEntity<List<Usuario>> listaUsuario() {
+
+        List<Usuario> usuarios = usuarioRepository.findAll();
+
+        return new ResponseEntity<List<Usuario>>(usuarios,HttpStatus.OK);
+    }
+
+    @PostMapping(value = "salvar")
+    @ResponseBody
+    public ResponseEntity<Usuario> salvar(@RequestBody Usuario usuario) {
+
+        Usuario user = usuarioRepository.save(usuario);
+        return new ResponseEntity<Usuario>(user, HttpStatus.CREATED);
+
+    }
+    @DeleteMapping(value = "delete")
+    @ResponseBody
+    public ResponseEntity<String> delete(@RequestParam("id") Long iduser) {
+
+        usuarioRepository.deleteById(iduser);
+        return new ResponseEntity<String>("User deletado com sucesso", HttpStatus.OK);
+
+    }
+
 
 }
