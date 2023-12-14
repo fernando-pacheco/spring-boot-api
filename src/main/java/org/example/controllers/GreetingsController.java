@@ -1,5 +1,8 @@
 package org.example.controllers;
 
+import org.example.model.Usuario;
+import org.example.repository.UsuarioRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,6 +16,10 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 public class GreetingsController {
+
+    @Autowired
+    private UsuarioRepository usuarioRepository;
+
     /**
      *
      * @param name the name to greet
@@ -23,9 +30,12 @@ public class GreetingsController {
     public String greetingText(@PathVariable String name) {
         return "Springboot API: " + name + "!";
     }
-    @RequestMapping(value="olamundo/{nome}", method = RequestMethod.GET)
+    @RequestMapping(value="/olamundo/{nome}", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     public String retornaOlaMundo(@PathVariable String nome){
+        Usuario usuario = new Usuario();
+        usuario.setNome(nome);
+        usuarioRepository.save(usuario);
         return "Ola mundo "+ nome;
     }
 
