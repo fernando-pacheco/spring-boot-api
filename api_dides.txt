@@ -1,0 +1,31 @@
+api REQUEST SOAP to json
+
+	send infos para o camunda;
+
+
+classes:
+	- account:
+		- account number;
+		
+	- customer:
+		- first name;
+		- last name;
+		- email
+
+	- product:
+		- id;
+		- action;
+		- key (list);
+		- value (list);
+	
+	- partner:
+		- partner name;
+
+	- action:
+		- POST;
+
+
+RESPONSE
+	
+	- código de retorno;
+	- mensagem de retorno.
